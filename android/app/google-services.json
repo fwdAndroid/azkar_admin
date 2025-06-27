@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "296955372663",
+    "project_id": "azkar-4a907",
+    "storage_bucket": "azkar-4a907.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296955372663:android:9944a545234d242a449272",
+        "android_client_info": {
+          "package_name": "com.example.azkar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296955372663-aajtbkiirkfnuq3ff5kkjfqnl5trv643.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.azkar",
+            "certificate_hash": "c8d8e65073accd6c8bf7e798b2acbaa8802f86da"
+          }
+        },
+        {
+          "client_id": "296955372663-o7l68si27f9bfiv6i90ge5d7lfklv5h8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8H1jGg2pLe03IE2wSOWAK_KEJbB4IAlw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296955372663-o7l68si27f9bfiv6i90ge5d7lfklv5h8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "296955372663-2gc52jeneq85iqiamlmu5tbifj8ofkel.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.azkar"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296955372663:android:d7c682142a573e17449272",
+        "android_client_info": {
+          "package_name": "com.example.azkar_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296955372663-o7l68si27f9bfiv6i90ge5d7lfklv5h8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8H1jGg2pLe03IE2wSOWAK_KEJbB4IAlw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296955372663-o7l68si27f9bfiv6i90ge5d7lfklv5h8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "296955372663-2gc52jeneq85iqiamlmu5tbifj8ofkel.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.azkar"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
