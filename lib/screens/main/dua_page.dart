@@ -4,104 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
-class DuaPage extends StatefulWidget {
+class DuaPage extends StatelessWidget {
   const DuaPage({super.key});
-
-  @override
-  State<DuaPage> createState() => _DuaPageState();
-}
-
-class _DuaPageState extends State<DuaPage> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  String? _currentlyPlayingUrl;
-
-  Stream<DurationState> get _durationState =>
-      Rx.combineLatest2<Duration, Duration, DurationState>(
-        _audioPlayer.positionStream,
-        _audioPlayer.durationStream.map((d) => d ?? Duration.zero),
-        (position, duration) =>
-            DurationState(position: position, total: duration),
-      );
-
-  Future<void> togglePlayPause(String url) async {
-    if (_currentlyPlayingUrl == url && _audioPlayer.playing) {
-      await _audioPlayer.pause();
-    } else {
-      if (_currentlyPlayingUrl != url) {
-        await _audioPlayer.setUrl(url);
-        _currentlyPlayingUrl = url;
-      }
-      await _audioPlayer.play();
-    }
-    setState(() {}); // update play/pause icon
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  Widget _buildAudioControls(String audioUrl) {
-    bool isCurrent = _currentlyPlayingUrl == audioUrl;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(
-                _audioPlayer.playing && isCurrent
-                    ? Icons.pause_circle
-                    : Icons.play_circle,
-                size: 36,
-                color: Colors.green,
-              ),
-              onPressed: () => togglePlayPause(audioUrl),
-            ),
-          ],
-        ),
-        if (isCurrent)
-          StreamBuilder<DurationState>(
-            stream: _durationState,
-            builder: (context, snapshot) {
-              final durationState = snapshot.data;
-              final position = durationState?.position ?? Duration.zero;
-              final total = durationState?.total ?? Duration.zero;
-
-              return Column(
-                children: [
-                  Slider(
-                    activeColor: Colors.green,
-                    inactiveColor: Colors.grey,
-                    min: 0.0,
-                    max: total.inMilliseconds.toDouble(),
-                    value: position.inMilliseconds
-                        .clamp(0, total.inMilliseconds)
-                        .toDouble(),
-                    onChanged: (value) {
-                      _audioPlayer.seek(Duration(milliseconds: value.toInt()));
-                    },
-                  ),
-                  Text(
-                    "${_formatDuration(position)} / ${_formatDuration(total)}",
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
-              );
-            },
-          ),
-      ],
-    );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +21,6 @@ class _DuaPageState extends State<DuaPage> {
         },
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/bg.png"),
@@ -132,17 +34,7 @@ class _DuaPageState extends State<DuaPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.podcasts_outlined, size: 40),
-                    SizedBox(height: 8),
-                    Text("No posts available"),
-                  ],
-                ),
-              );
+              return const Center(child: Text("No Duas Available"));
             }
 
             var posts = snapshot.data!.docs;
@@ -151,82 +43,156 @@ class _DuaPageState extends State<DuaPage> {
               itemCount: posts.length,
               itemBuilder: (context, index) {
                 var post = posts[index].data() as Map<String, dynamic>;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 280,
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Today's Dua",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              post['dua'] ?? '',
-                              style: TextStyle(fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 12),
-                            if (post['audio'] != null &&
-                                post['audio'].toString().isNotEmpty)
-                              _buildAudioControls(post['audio']),
-                            TextButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text("Confirm Delete"),
-                                    content: Text(
-                                      "Are you sure you want to delete this dua?",
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text("Cancel"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                          await FirebaseFirestore.instance
-                                              .collection('dua')
-                                              .doc(posts[index].id)
-                                              .delete();
-                                        },
-                                        child: Text(
-                                          "Delete",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Delete",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                var docId = posts[index].id;
+
+                return DuaCard(post: post, docId: docId);
               },
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class DuaCard extends StatefulWidget {
+  final Map<String, dynamic> post;
+  final String docId;
+
+  const DuaCard({super.key, required this.post, required this.docId});
+
+  @override
+  State<DuaCard> createState() => _DuaCardState();
+}
+
+class _DuaCardState extends State<DuaCard> {
+  late AudioPlayer _player;
+  bool _isPlaying = false;
+
+  Stream<DurationState> get _durationState =>
+      Rx.combineLatest2<Duration, Duration, DurationState>(
+        _player.positionStream,
+        _player.durationStream.map((d) => d ?? Duration.zero),
+        (position, duration) =>
+            DurationState(position: position, total: duration ?? Duration.zero),
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    if (widget.post['audio'] != null &&
+        widget.post['audio'].toString().isNotEmpty) {
+      try {
+        await _player.setUrl(widget.post['audio']);
+      } catch (e) {
+        print("Audio error: $e");
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  void _togglePlay() async {
+    if (_player.playing) {
+      await _player.pause();
+    } else {
+      await _player.play();
+    }
+
+    setState(() {
+      _isPlaying = _player.playing;
+    });
+  }
+
+  String _formatDuration(Duration d) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            Text(
+              "Today's Dua",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              widget.post['dua'] ?? '',
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            if (widget.post['audio'] != null &&
+                widget.post['audio'].toString().isNotEmpty)
+              Column(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      _isPlaying ? Icons.pause_circle : Icons.play_circle,
+                      size: 36,
+                      color: Colors.green,
+                    ),
+                    onPressed: _togglePlay,
+                  ),
+                  StreamBuilder<DurationState>(
+                    stream: _durationState,
+                    builder: (context, snapshot) {
+                      final data = snapshot.data;
+                      final position = data?.position ?? Duration.zero;
+                      final total = data?.total ?? Duration.zero;
+
+                      return Column(
+                        children: [
+                          Slider(
+                            activeColor: Colors.green,
+                            inactiveColor: Colors.grey,
+                            min: 0.0,
+                            max: total.inMilliseconds.toDouble(),
+                            value: position.inMilliseconds
+                                .clamp(0, total.inMilliseconds)
+                                .toDouble(),
+                            onChanged: (value) {
+                              _player.seek(
+                                Duration(milliseconds: value.toInt()),
+                              );
+                            },
+                          ),
+                          Text(
+                            "${_formatDuration(position)} / ${_formatDuration(total)}",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('dua')
+                    .doc(widget.docId)
+                    .delete();
+              },
+              child: Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
         ),
       ),
     );
