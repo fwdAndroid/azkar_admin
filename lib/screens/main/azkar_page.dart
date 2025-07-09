@@ -116,6 +116,20 @@ class _AzkarPageState extends State<AzkarPage> {
               text: "فوائد الأذكار",
             ),
 
+            //Dua
+            AzkarTitleWidget(
+              image: "assets/dua.png",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => ViewAzkarPage(azkarType: "duazakar"),
+                  ),
+                );
+              },
+              text: "دعاء",
+            ),
+
             //Al Raqaya From Sunnah
             AzkarTitleWidget(
               image: "assets/tasbih.png",
