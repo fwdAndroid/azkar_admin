@@ -115,6 +115,33 @@ class _AzkarPageState extends State<AzkarPage> {
               ),
               text: "فوائد الأذكار",
             ),
+
+            //Al Raqaya From Sunnah
+            AzkarTitleWidget(
+              image: "assets/tasbih.png",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => ViewAzkarPage(azkarType: 'sunnah'),
+                  ),
+                );
+              },
+              text: "الرقية من السنة",
+            ),
+            //Dua
+            AzkarTitleWidget(
+              image: "assets/islam.png",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => ViewAzkarPage(azkarType: "quran"),
+                  ),
+                );
+              },
+              text: "الرقية من القرآن الكريم",
+            ),
           ],
         ),
       ),
