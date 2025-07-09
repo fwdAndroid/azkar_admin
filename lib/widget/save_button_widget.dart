@@ -1,5 +1,5 @@
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class SaveButton extends StatelessWidget {
@@ -17,9 +17,9 @@ class SaveButton extends StatelessWidget {
         backgroundColor: Color(0xFF097132),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child: Text(
+      child: ArabicText(
         title,
-        style: GoogleFonts.manrope(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: Colors.white,

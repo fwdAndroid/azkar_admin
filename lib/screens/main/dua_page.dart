@@ -1,8 +1,7 @@
 import 'package:azkar_admin/screens/add/add_dua.dart';
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:rxdart/rxdart.dart';
 
 class DuaPage extends StatelessWidget {
   const DuaPage({super.key});
@@ -34,7 +33,7 @@ class DuaPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Center(child: Text("No Duas Available"));
+              return const Center(child: ArabicText("No Duas Available"));
             }
 
             var posts = snapshot.data!.docs;
@@ -66,58 +65,6 @@ class DuaCard extends StatefulWidget {
 }
 
 class _DuaCardState extends State<DuaCard> {
-  late AudioPlayer _player;
-  bool _isPlaying = false;
-
-  Stream<DurationState> get _durationState =>
-      Rx.combineLatest2<Duration, Duration, DurationState>(
-        _player.positionStream,
-        _player.durationStream.map((d) => d ?? Duration.zero),
-        (position, duration) =>
-            DurationState(position: position, total: duration ?? Duration.zero),
-      );
-
-  @override
-  void initState() {
-    super.initState();
-    _player = AudioPlayer();
-    _initAudio();
-  }
-
-  Future<void> _initAudio() async {
-    if (widget.post['audio'] != null &&
-        widget.post['audio'].toString().isNotEmpty) {
-      try {
-        await _player.setUrl(widget.post['audio']);
-      } catch (e) {
-        print("Audio error: $e");
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
-
-  void _togglePlay() async {
-    if (_player.playing) {
-      await _player.pause();
-    } else {
-      await _player.play();
-    }
-
-    setState(() {
-      _isPlaying = _player.playing;
-    });
-  }
-
-  String _formatDuration(Duration d) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    return "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -128,61 +75,17 @@ class _DuaCardState extends State<DuaCard> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            Text(
+            ArabicText(
               "Today's Dua",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text(
+            ArabicText(
               widget.post['dua'] ?? '',
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
-            if (widget.post['audio'] != null &&
-                widget.post['audio'].toString().isNotEmpty)
-              Column(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      _isPlaying ? Icons.pause_circle : Icons.play_circle,
-                      size: 36,
-                      color: Colors.green,
-                    ),
-                    onPressed: _togglePlay,
-                  ),
-                  StreamBuilder<DurationState>(
-                    stream: _durationState,
-                    builder: (context, snapshot) {
-                      final data = snapshot.data;
-                      final position = data?.position ?? Duration.zero;
-                      final total = data?.total ?? Duration.zero;
 
-                      return Column(
-                        children: [
-                          Slider(
-                            activeColor: Colors.green,
-                            inactiveColor: Colors.grey,
-                            min: 0.0,
-                            max: total.inMilliseconds.toDouble(),
-                            value: position.inMilliseconds
-                                .clamp(0, total.inMilliseconds)
-                                .toDouble(),
-                            onChanged: (value) {
-                              _player.seek(
-                                Duration(milliseconds: value.toInt()),
-                              );
-                            },
-                          ),
-                          Text(
-                            "${_formatDuration(position)} / ${_formatDuration(total)}",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
             TextButton(
               onPressed: () async {
                 await FirebaseFirestore.instance
@@ -190,7 +93,7 @@ class _DuaCardState extends State<DuaCard> {
                     .doc(widget.docId)
                     .delete();
               },
-              child: Text("Delete", style: TextStyle(color: Colors.red)),
+              child: ArabicText("Delete", style: TextStyle(color: Colors.red)),
             ),
           ],
         ),

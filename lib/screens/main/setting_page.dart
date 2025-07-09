@@ -1,3 +1,4 @@
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:azkar_admin/widget/logout_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -51,7 +52,7 @@ class _SettingPageState extends State<SettingPage> {
                               },
                             );
                           },
-                          child: Text(
+                          child: ArabicText(
                             "Log out",
                             style: TextStyle(color: Colors.white),
                           ),

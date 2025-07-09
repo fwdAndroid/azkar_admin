@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:azkar_admin/screens/main/azkar_page.dart';
 import 'package:azkar_admin/screens/main/dua_page.dart';
 import 'package:azkar_admin/screens/main/setting_page.dart';
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -51,9 +52,13 @@ class _MainDashboardState extends State<MainDashboard> {
           items: [
             BottomNavigationBarItem(
               icon: _currentIndex == 0
-                  ? Image.asset("assets/azkar_white.png", width: 25, height: 25)
+                  ? Image.asset(
+                      "assets/moon_14181732.png",
+                      width: 25,
+                      height: 25,
+                    )
                   : Image.asset(
-                      "assets/azkar_color.png",
+                      "assets/moon_14181732.png",
                       width: 25,
                       height: 25,
                     ),
@@ -64,12 +69,12 @@ class _MainDashboardState extends State<MainDashboard> {
               label: "Dua's",
               icon: _currentIndex == 1
                   ? Image.asset(
-                      "assets/prayer_white.png",
+                      "assets/prayer_12477451.png",
                       width: 25,
                       height: 25,
                     )
                   : Image.asset(
-                      "assets/prayer_color.png",
+                      "assets/prayer_12477451.png",
                       width: 25,
                       height: 25,
                     ),
@@ -78,8 +83,8 @@ class _MainDashboardState extends State<MainDashboard> {
             BottomNavigationBarItem(
               label: "Settings",
               icon: _currentIndex == 2
-                  ? Icon(Icons.settings, size: 25, color: Colors.white)
-                  : Icon(Icons.settings),
+                  ? Image.asset("assets/setting.png", width: 25, height: 25)
+                  : Image.asset("assets/setting.png", width: 25, height: 25),
             ),
           ],
         ),
@@ -91,8 +96,8 @@ class _MainDashboardState extends State<MainDashboard> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Exit App'),
-        content: Text('Do you want to exit the app?'),
+        title: ArabicText('Exit App'),
+        content: ArabicText('Do you want to exit the app?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -106,7 +111,7 @@ class _MainDashboardState extends State<MainDashboard> {
                 exit(0); // For iOS
               }
             },
-            child: Text('Yes'),
+            child: ArabicText('Yes'),
           ),
         ],
       ),

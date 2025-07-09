@@ -1,5 +1,6 @@
 import 'package:azkar_admin/screens/main/main_dashboard.dart';
 import 'package:azkar_admin/services/auth_services.dart';
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      ).showSnackBar(SnackBar(content: ArabicText(e.toString())));
     } finally {
       setState(() => isLoading = false);
     }
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 40),
                   Image.asset("assets/logo.png", height: 150),
                   const SizedBox(height: 20),
-                  const Text(
+                  const ArabicText(
                     'Login to Azkar App',
                     style: TextStyle(
                       fontSize: 24,
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  const ArabicText(
                     'Begin each day with guidance from Allah.\n Let prayer shape your path and purpose.',
                     textAlign: TextAlign.center,
 
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 8, top: 8),
-                      child: Text(
+                      child: ArabicText(
                         "Email address",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 8, top: 8),
-                      child: Text(
+                      child: ArabicText(
                         "Password",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -156,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           onPressed: isLoading ? null : _handleAuth,
-                          child: Text(
+                          child: ArabicText(
                             "Sign in",
                             style: TextStyle(color: Colors.white),
                           ),

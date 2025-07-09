@@ -1,4 +1,5 @@
 import 'package:azkar_admin/screens/add/add_azkars_page.dart';
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class ViewAzkarPage extends StatelessWidget {
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text("View", style: TextStyle(color: Colors.white)),
+        title: ArabicText("View", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
       ),
       body: Container(
@@ -45,7 +46,7 @@ class ViewAzkarPage extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(child: Text("No Azkar found."));
+              return Center(child: ArabicText("No Azkar found."));
             }
 
             final azkarList = snapshot.data!.docs;
@@ -53,74 +54,70 @@ class ViewAzkarPage extends StatelessWidget {
             return ListView.builder(
               itemCount: azkarList.length,
               itemBuilder: (context, index) {
-                final azkar = azkarList[index].data() as Map<String, dynamic>;
-
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 210,
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              azkar['dua'],
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text("Confirm Delete"),
-                                  content: Text(
-                                    "Are you sure you want to delete this dua?",
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context), // cancel
-                                      child: Text("Cancel"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        // Close the dialog first
-                                        Navigator.pop(context);
-
-                                        // Delete the document
-                                        await FirebaseFirestore.instance
-                                            .collection(azkarType)
-                                            .doc(azkar['uuid'])
-                                            .delete();
-                                      },
-                                      child: Text(
-                                        "Delete",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            child: Text(
-                              "Delete",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return AzkarCard(
+                  azkar: azkarList[index].data() as Map<String, dynamic>,
+                  docId: azkarList[index].id,
+                  azkarType: azkarType,
                 );
               },
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class AzkarCard extends StatefulWidget {
+  final Map<String, dynamic> azkar;
+  final String docId;
+  final String azkarType;
+
+  const AzkarCard({
+    super.key,
+    required this.azkar,
+    required this.docId,
+    required this.azkarType,
+  });
+
+  @override
+  State<AzkarCard> createState() => _AzkarCardState();
+}
+
+class _AzkarCardState extends State<AzkarCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: 250,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                ArabicText(
+                  widget.azkar['dua'] ?? '',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                ),
+
+                TextButton(
+                  onPressed: () async {
+                    await FirebaseFirestore.instance
+                        .collection(widget.azkarType)
+                        .doc(widget.docId)
+                        .delete();
+                  },
+                  child: Text("Delete", style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

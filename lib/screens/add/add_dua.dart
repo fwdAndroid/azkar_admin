@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'package:azkar_admin/screens/main/main_dashboard.dart';
 import 'package:azkar_admin/screens/utils/show_message.dart';
+import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:azkar_admin/widget/save_button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:uuid/uuid.dart';
 
 class AddDua extends StatefulWidget {
@@ -21,38 +18,10 @@ class _AddDuaState extends State<AddDua> {
   bool _isLoading = false;
   var uuid = Uuid().v4();
 
-  File? _selectedAudio;
-  AudioPlayer _audioPlayer = AudioPlayer();
-
   @override
   void dispose() {
-    _audioPlayer.dispose();
     nameController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickAudio() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-    );
-
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        _selectedAudio = File(result.files.single.path!);
-      });
-      await _audioPlayer.setFilePath(_selectedAudio!.path);
-    }
-  }
-
-  Future<String?> _uploadAudio(String uuid) async {
-    if (_selectedAudio == null) return null;
-
-    final storageRef = FirebaseStorage.instance.ref().child(
-      'dua_audios/$uuid.mp3',
-    );
-
-    await storageRef.putFile(_selectedAudio!);
-    return await storageRef.getDownloadURL();
   }
 
   Future<void> _saveDua() async {
@@ -61,12 +30,9 @@ class _AddDuaState extends State<AddDua> {
     });
 
     try {
-      String? audioUrl = await _uploadAudio(uuid);
-
       await FirebaseFirestore.instance.collection("dua").doc(uuid).set({
         "uuid": uuid,
         "dua": nameController.text.trim(),
-        "audio": audioUrl, // Optional
       });
 
       showMessageBar("Dua Added", context);
@@ -76,7 +42,6 @@ class _AddDuaState extends State<AddDua> {
         MaterialPageRoute(builder: (_) => MainDashboard()),
       );
     } catch (e) {
-      print("Error saving dua: $e");
       showMessageBar("Failed to add Dua", context);
     } finally {
       setState(() {
@@ -95,7 +60,7 @@ class _AddDuaState extends State<AddDua> {
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
-          title: Text("Add Dua", style: TextStyle(color: Colors.white)),
+          title: ArabicText("Add Dua", style: TextStyle(color: Colors.white)),
         ),
         body: Stack(
           children: [
@@ -133,41 +98,6 @@ class _AddDuaState extends State<AddDua> {
                   ),
 
                   // Audio Selector
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Attach Optional Audio",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: _pickAudio,
-                              icon: Icon(Icons.audiotrack),
-                              label: Text("Select Audio"),
-                            ),
-                            SizedBox(width: 16),
-                            if (_selectedAudio != null)
-                              IconButton(
-                                icon: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => _audioPlayer.play(),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 100),
                 ],
               ),
             ),
