@@ -1,3 +1,4 @@
+import 'package:azkar_admin/screens/font_setting.dart';
 import 'package:azkar_admin/widget/arabic_text_widget.dart';
 import 'package:azkar_admin/widget/logout_widget.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,28 @@ class _SettingPageState extends State<SettingPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.asset("assets/logo.png", height: 150),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: const Icon(Icons.settings, color: Colors.white),
+                    title: ArabicText(
+                      "Font Settings",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FontSettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
