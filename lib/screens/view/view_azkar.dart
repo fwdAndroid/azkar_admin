@@ -90,7 +90,7 @@ class _AzkarCardState extends State<AzkarCard> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: 250,
+        height: 290,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
