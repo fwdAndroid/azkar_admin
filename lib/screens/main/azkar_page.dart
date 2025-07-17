@@ -92,17 +92,17 @@ class _AzkarPageState extends State<AzkarPage> {
               ),
               text: "بعد الصلوات",
             ),
-            //Confronting a metaphor
-            AzkarTitleWidget(
-              image: "assets/books.png",
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (builder) => ViewAzkarPage(azkarType: 'metaphor'),
-                ),
-              ),
-              text: "مواجهة تشبيه",
-            ),
+            // //Confronting a metaphor
+            // AzkarTitleWidget(
+            //   image: "assets/books.png",
+            //   onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (builder) => ViewAzkarPage(azkarType: 'metaphor'),
+            //     ),
+            //   ),
+            //   text: "مواجهة تشبيه",
+            // ),
             //Benefits
             AzkarTitleWidget(
               image: "assets/benefit.png",
@@ -116,19 +116,19 @@ class _AzkarPageState extends State<AzkarPage> {
               text: "فوائد الأذكار",
             ),
 
-            //Dua
-            AzkarTitleWidget(
-              image: "assets/dua.png",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (builder) => ViewAzkarPage(azkarType: "duazakar"),
-                  ),
-                );
-              },
-              text: "دعاء",
-            ),
+            // //Dua
+            // AzkarTitleWidget(
+            //   image: "assets/dua.png",
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (builder) => ViewAzkarPage(azkarType: "duazakar"),
+            //       ),
+            //     );
+            //   },
+            //   text: "دعاء",
+            // ),
 
             //Al Raqaya From Sunnah
             AzkarTitleWidget(

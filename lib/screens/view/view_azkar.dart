@@ -89,34 +89,66 @@ class _AzkarCardState extends State<AzkarCard> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: 290,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                ArabicText(
-                  widget.azkar['dua'] ?? '',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                ),
-
-                TextButton(
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ArabicText(
+                widget.azkar['dua'] ?? '',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.center,
+                child: TextButton(
                   onPressed: () async {
-                    await FirebaseFirestore.instance
-                        .collection(widget.azkarType)
-                        .doc(widget.docId)
-                        .delete();
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Confirm Delete"),
+                        content: Text(
+                          "Are you sure you want to delete this Azkar?",
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text("Cancel"),
+                            onPressed: () => Navigator.pop(context, false),
+                          ),
+                          TextButton(
+                            child: Text(
+                              "Delete",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () => Navigator.pop(context, true),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirm == true) {
+                      await FirebaseFirestore.instance
+                          .collection(widget.azkarType)
+                          .doc(widget.docId)
+                          .delete();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Azkar deleted successfully."),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                   child: Text("Delete", style: TextStyle(color: Colors.red)),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
